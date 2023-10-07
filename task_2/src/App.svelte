@@ -65,7 +65,7 @@ let lastChangedInput = null;
      if (lastChangedInput === 'from' && !isNaN(amountFrom) && amountFrom !== '') {
           amountTo = (amountFrom * exchangeRateFrom).toFixed(5);
         } else if (lastChangedInput === 'to' && !isNaN(amountTo) && amountTo !== '') {
-          amountFrom = (amountTo * exchangeRateTo).toFixed(5);
+          amountFrom = (amountTo / exchangeRateTo).toFixed(5);
         }
     } catch (error) {
       console.error("Ошибка", error);
