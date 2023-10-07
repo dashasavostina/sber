@@ -41,8 +41,8 @@
 
   const convertCurrency = async () => {
 
-    const urlFrom = `https://v6.exchangerate-api.com/v6/be4ed61d790a5d3b98c2ea34/latest/${currencyFrom}`;
-    const urlTo = `https://v6.exchangerate-api.com/v6/be4ed61d790a5d3b98c2ea34/latest/${currencyTo}`;
+    const urlFrom = `https://v6.exchangerate-api.com/v6/1c0bc4dc3b62271f5c63fd91/latest/${currencyFrom}`;
+    const urlTo = `https://v6.exchangerate-api.com/v6/1c0bc4dc3b62271f5c63fd91/latest/${currencyTo}`;
 
     try {
       const responseFrom = await fetch(urlFrom);
