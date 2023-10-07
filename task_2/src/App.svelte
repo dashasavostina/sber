@@ -1,17 +1,11 @@
 <script>
-  import { onMount } from "svelte";
+  import CurrencyDrp from "./lib/CurrencyDrp.svelte";
 
-import CurrencyDrp from "./lib/CurrencyDrp.svelte";
-
-let lastChangedInput = null;
-
+  let lastChangedInput = null;
   let amountFrom = 0;
   let currencyFrom = "";
   let amountTo = 0;
   let currencyTo = "";
-  let apiKey = "";
-
- 
 
  const handleCurrencyFromChange = (event) => {
     currencyFrom = event.detail;
@@ -23,29 +17,32 @@ let lastChangedInput = null;
     convertCurrency();
   };
 
-  
   const handleAmountFromInput = (event) => {
-    amountFrom = event.target.value;
+    amountFrom = event.target.value.replace(/\,/g, '.');
+    const isValidInput = /^[0-9]*([.,]?[0-9]*)?$/.test(amountFrom);
+    if (!isValidInput) {
+      alert('введите число');
+      amountFrom = 0;
+    }
      lastChangedInput = 'from';
     convertCurrency();
   };
 
   const handleAmountToInput = (event) => {
-    amountTo = event.target.value;
+    amountTo = event.target.value.replace(/\,/g, '.');
+    const isValidInput = /^[0-9]*([.,]?[0-9]*)?$/.test(amountTo);
+    if (!isValidInput) {
+      alert('введите число');
+      amountTo = 0;
+    }
      lastChangedInput = 'to';
     convertCurrency();
   };
 
-
-
   const convertCurrency = async () => {
-     if(!apiKey) {
-      apiKey = prompt("Введите ключ API");
-      return
-      }
 
-    const urlFrom = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/${currencyFrom}`;
-    const urlTo = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/${currencyTo}`;
+    const urlFrom = `https://v6.exchangerate-api.com/v6/be4ed61d790a5d3b98c2ea34/latest/${currencyFrom}`;
+    const urlTo = `https://v6.exchangerate-api.com/v6/be4ed61d790a5d3b98c2ea34/latest/${currencyTo}`;
 
     try {
       const responseFrom = await fetch(urlFrom);
@@ -65,7 +62,7 @@ let lastChangedInput = null;
      if (lastChangedInput === 'from' && !isNaN(amountFrom) && amountFrom !== '') {
           amountTo = (amountFrom * exchangeRateFrom).toFixed(5);
         } else if (lastChangedInput === 'to' && !isNaN(amountTo) && amountTo !== '') {
-          amountFrom = (amountTo / exchangeRateTo).toFixed(5);
+          amountFrom = (amountTo * exchangeRateTo).toFixed(5);
         }
     } catch (error) {
       console.error("Ошибка", error);
@@ -75,9 +72,15 @@ let lastChangedInput = null;
 
 <style>
 
+  main {
+  width: calc(100% - 2*50px);
+  }
+
   form {
-    max-width: 300px;
+    width: 100%;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
   }
 
   label {
@@ -93,10 +96,11 @@ let lastChangedInput = null;
 </style>
 
 <main>
+<h1>Конвертер валют</h1>
   <form on:submit|preventDefault={convertCurrency}>
     <label>
       Значение исходной валюты:
-      <input type="number" bind:value={amountFrom} on:input={handleAmountFromInput}  />
+      <input type="text" bind:value={amountFrom} on:input={handleAmountFromInput} placeholder="0.00" />
     </label>
     <label>
       Исходная валюта:
@@ -105,14 +109,12 @@ let lastChangedInput = null;
     </label>
     <label>
       Значение искомой валюты:
-      <input type="number" bind:value={amountTo} on:input={handleAmountToInput} />
+      <input type="text" bind:value={amountTo} on:input={handleAmountToInput}  placeholder="0.00" />
     </label> 
     <label>
       Искомая валюта:
       <CurrencyDrp on:currencySelected={handleCurrencyToChange} />
-      
     </label>
-    
   </form>
 
   <p>
